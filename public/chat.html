@@ -1,0 +1,1611 @@
+<span onclick="insertEmoji('✨')" title="Sparkles">✨</span>
+                    <span onclick="insertEmoji('💫')" title="Dizzy">💫</span>
+                    <span onclick="insertEmoji('⚡')" title="High voltage">⚡</span>
+                    <span onclick="insertEmoji('🌟')" title="Glowing star">🌟</span>
+                    <span onclick="insertEmoji('💥')" title="Collision">💥</span>
+                    <span onclick="insertEmoji('💎')" title="Gem stone">💎</span>
+                    <span onclick="insertEmoji('🎀')" title="Ribbon">🎀</span>
+                    <span onclick="insertEmoji('🎗️')" title="Reminder ribbon">🎗️</span>
+                    <span onclick="insertEmoji('🏅')" title="Sports medal">🏅</span>
+                    <span onclick="insertEmoji('🎖️')" title="Military medal">🎖️</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revolutionary Settings Modal -->
+        <div class="modal" id="settingsModal" role="dialog" aria-labelledby="settings-title" aria-modal="true">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="settings-title">Settings</h3>
+                    <button 
+                        class="close-modal" 
+                        onclick="toggleSettings()"
+                        aria-label="Close settings"
+                    >
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label for="theme-toggle">Appearance</label>
+                                <span class="setting-description">Switch between light and dark theme</span>
+                            </div>
+                            <button 
+                                id="theme-toggle"
+                                onclick="changeTheme()" 
+                                class="theme-btn"
+                                aria-label="Toggle theme"
+                            >
+                                <i class="fas fa-moon" aria-hidden="true"></i>
+                                <span>Toggle Theme</span>
+                            </button>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label for="notification-toggle">Notifications</label>
+                                <span class="setting-description">Enable or disable message notifications</span>
+                            </div>
+                            <button 
+                                id="notification-toggle"
+                                onclick="toggleNotifications()" 
+                                class="notification-btn"
+                                aria-label="Toggle notifications"
+                            >
+                                <i class="fas fa-bell" aria-hidden="true"></i>
+                                <span>Toggle Notifications</span>
+                            </button>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label for="sound-toggle">Sound Effects</label>
+                                <span class="setting-description">Play sounds for new messages</span>
+                            </div>
+                            <button 
+                                id="sound-toggle"
+                                onclick="toggleSounds()" 
+                                class="sound-btn"
+                                aria-label="Toggle sounds"
+                            >
+                                <i class="fas fa-volume-up" aria-hidden="true"></i>
+                                <span>Toggle Sounds</span>
+                            </button>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label for="status-toggle">Online Status</label>
+                                <span class="setting-description">Show your online status to others</span>
+                            </div>
+                            <button 
+                                id="status-toggle"
+                                onclick="toggleOnlineStatus()" 
+                                class="status-btn"
+                                aria-label="Toggle online status visibility"
+                            >
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                                <span>Toggle Status</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section danger-zone">
+                        <h4>Account</h4>
+                        <button 
+                            onclick="logout()" 
+                            class="logout-btn"
+                            aria-label="Sign out of your account"
+                        >
+                            <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Status Toast -->
+        <div class="connection-toast" id="connectionToast" style="display: none;">
+            <div class="toast-content">
+                <div class="toast-icon">
+                    <i class="fas fa-wifi" id="connectionIcon" aria-hidden="true"></i>
+                </div>
+                <div class="toast-text">
+                    <span id="connectionMessage">Connected</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Actions Menu -->
+        <div class="message-actions" id="messageActions" style="display: none;">
+            <button onclick="copyMessage()" aria-label="Copy message">
+                <i class="fas fa-copy" aria-hidden="true"></i>
+                <span>Copy</span>
+            </button>
+            <button onclick="replyToMessage()" aria-label="Reply to message">
+                <i class="fas fa-reply" aria-hidden="true"></i>
+                <span>Reply</span>
+            </button>
+            <button onclick="deleteMessage()" class="danger" aria-label="Delete message">
+                <i class="fas fa-trash" aria-hidden="true"></i>
+                <span>Delete</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Enhanced Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Connecting to ChatApp...</h3>
+            <p id="loadingMessage">Setting up your chat experience</p>
+            <div class="loading-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Firebase SDK -->
+    <script type="module" src="firebase-config.js"></script>
+    <!-- Enhanced Chat functionality -->
+    <script src="chat.js"></script>
+    
+    <!-- Enhanced Chat Functionality -->
+    <script>
+        // Theme Detection
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        
+        // Enhanced Chat Features
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize character counter
+            const messageInput = document.getElementById('messageInput');
+            const characterCount = document.getElementById('characterCount');
+            const sendBtn = document.getElementById('sendBtn');
+            
+            messageInput.addEventListener('input', function() {
+                const length = this.value.length;
+                characterCount.textContent = `${length}/1000`;
+                
+                // Enable/disable send button
+                sendBtn.disabled = length === 0;
+                
+                // Color coding for character count
+                if (length > 900) {
+                    characterCount.style.color = 'var(--warning)';
+                } else if (length > 800) {
+                    characterCount.style.color = 'var(--warning)';
+                } else {
+                    characterCount.style.color = 'var(--text-tertiary)';
+                }
+            });
+            
+            // Enhanced emoji picker functionality
+            const emojiCategories = document.querySelectorAll('.emoji-category');
+            const emojiSections = document.querySelectorAll('.emoji-section');
+            
+            emojiCategories.forEach(category => {
+                category.addEventListener('click', function() {
+                    // Remove active class from all categories
+                    emojiCategories.forEach(cat => cat.classList.remove('active'));
+                    // Add active class to clicked category
+                    this.classList.add('active');
+                    
+                    // Hide all sections
+                    emojiSections.forEach(section => section.style.display = 'none');
+                    // Show selected section
+                    const targetCategory = this.dataset.category;
+                    const targetSection = document.querySelector(`[data-category="${targetCategory}"]`);
+                    if (targetSection) {
+                        targetSection.style.display = 'grid';
+                    }
+                });
+            });
+            
+            // Enhanced connection status monitoring
+            let isOnline = navigator.onLine;
+            updateConnectionStatus(isOnline);
+            
+            window.addEventListener('online', () => {
+                isOnline = true;
+                updateConnectionStatus(true);
+                showConnectionToast('Connected', 'success');
+            });
+            
+            window.addEventListener('offline', () => {
+                isOnline = false;
+                updateConnectionStatus(false);
+                showConnectionToast('Connection lost', 'error');
+            });
+            
+            // Message context menu
+            document.addEventListener('contextmenu', function(e) {
+                const messageElement = e.target.closest('.message');
+                if (messageElement) {
+                    e.preventDefault();
+                    showMessageActions(e.clientX, e.clientY, messageElement);
+                }
+            });
+            
+            // Close message actions when clicking elsewhere
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.message-actions')) {
+                    hideMessageActions();
+                }
+            });
+            
+            // Enhanced keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl/Cmd + Enter to send message
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+                
+                // Escape to close modals/pickers
+                if (e.key === 'Escape') {
+                    const emojiPicker = document.getElementById('emojiPicker');
+                    const settingsModal = document.getElementById('settingsModal');
+                    const usersSidebar = document.getElementById('usersSidebar');
+                    
+                    if (emojiPicker.style.display !== 'none') {
+                        toggleEmojiPicker();
+                    } else if (settingsModal.classList.contains('active')) {
+                        toggleSettings();
+                    } else if (usersSidebar.classList.contains('active')) {
+                        toggleUsersList();
+                    }
+                    
+                    hideMessageActions();
+                }
+            });
+            
+            // Initialize tooltips and accessibility features
+            initializeAccessibilityFeatures();
+            
+            // Auto-hide welcome message after first interaction
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            messageInput.addEventListener('focus', function() {
+                if (welcomeMessage) {
+                    welcomeMessage.style.display = 'none';
+                }
+            }, { once: true });
+        });
+        
+        function updateConnectionStatus(isConnected) {
+            const statusElements = document.querySelectorAll('#connectionStatus, #connectionIndicator');
+            const statusDots = document.querySelectorAll('.status-dot, .connection-dot');
+            const statusTexts = document.querySelectorAll('.status-text');
+            
+            statusElements.forEach(element => {
+                if (isConnected) {
+                    element.classList.remove('disconnected');
+                    element.classList.add('connected');
+                } else {
+                    element.classList.remove('connected');
+                    element.classList.add('disconnected');
+                }
+            });
+            
+            statusDots.forEach(dot => {
+                dot.style.backgroundColor = isConnected ? 'var(--success)' : 'var(--warning)';
+            });
+            
+            // Update status text
+            document.querySelectorAll('.status-text').forEach(text => {
+                if (text.id !== 'onlineCount') {
+                    text.textContent = isConnected ? 'Connected' : 'Disconnected';
+                }
+            });
+        }
+        
+        function showConnectionToast(message, type) {
+            const toast = document.getElementById('connectionToast');
+            const icon = document.getElementById('connectionIcon');
+            const messageElement = document.getElementById('connectionMessage');
+            
+            messageElement.textContent = message;
+            
+            // Update icon based on type
+            if (type === 'success') {
+                icon.className = 'fas fa-wifi';
+                toast.className = 'connection-toast success';
+            } else {
+                icon.className = 'fas fa-wifi-slash';
+                toast.className = 'connection-toast error';
+            }
+            
+            toast.style.display = 'block';
+            setTimeout(() => toast.classList.add('active'), 10);
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('active');
+                setTimeout(() => toast.style.display = 'none', 300);
+            }, 3000);
+        }
+        
+        function showMessageActions(x, y, messageElement) {
+            const actions = document.getElementById('messageActions');
+            actions.style.display = 'block';
+            actions.style.left = x + 'px';
+            actions.style.top = y + 'px';
+            actions.dataset.messageId = messageElement.dataset.messageId;
+            
+            // Adjust position if too close to edges
+            const rect = actions.getBoundingClientRect();
+            if (rect.right > window.innerWidth) {
+                actions.style.left = (x - rect.width) + 'px';
+            }
+            if (rect.bottom > window.innerHeight) {
+                actions.style.top = (y - rect.height) + 'px';
+            }
+        }
+        
+        function hideMessageActions() {
+            const actions = document.getElementById('messageActions');
+            actions.style.display = 'none';
+        }
+        
+        function copyMessage() {
+            const messageId = document.getElementById('messageActions').dataset.messageId;
+            const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+            const messageText = messageElement.querySelector('.message-text').textContent;
+            
+            navigator.clipboard.writeText(messageText).then(() => {
+                showToast('Message copied to clipboard', 'success');
+            }).catch(() => {
+                showToast('Failed to copy message', 'error');
+            });
+            
+            hideMessageActions();
+        }
+        
+        function replyToMessage() {
+            const messageId = document.getElementById('messageActions').dataset.messageId;
+            const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+            const messageText = messageElement.querySelector('.message-text').textContent;
+            const sender = messageElement.querySelector('.message-sender').textContent;
+            
+            const messageInput = document.getElementById('messageInput');
+            messageInput.value = `@${sender}: "${messageText.substring(0, 50)}${messageText.length > 50 ? '...' : ''}"\n\n`;
+            messageInput.focus();
+            autoResize(messageInput);
+            
+            hideMessageActions();
+        }
+        
+        function deleteMessage() {
+            const messageId = document.getElementById('messageActions').dataset.messageId;
+            
+            if (confirm('Are you sure you want to delete this message?')) {
+                // Implement delete functionality
+                console.log('Deleting message:', messageId);
+                showToast('Message deleted', 'success');
+            }
+            
+            hideMessageActions();
+        }
+        
+        function toggleSounds() {
+            const soundsEnabled = localStorage.getItem('soundsEnabled') !== 'false';
+            localStorage.setItem('soundsEnabled', !soundsEnabled);
+            
+            const btn = document.getElementById('sound-toggle');
+            const icon = btn.querySelector('i');
+            const text = btn.querySelector('span');
+            
+            if (!soundsEnabled) {
+                icon.className = 'fas fa-volume-up';
+                text.textContent = 'Sounds On';
+                showToast('Sounds enabled', 'success');
+            } else {
+                icon.className = 'fas fa-volume-mute';
+                text.textContent = 'Sounds Off';
+                showToast('Sounds disabled', 'success');
+            }
+        }
+        
+        function toggleOnlineStatus() {
+            const statusVisible = localStorage.getItem('statusVisible') !== 'false';
+            localStorage.setItem('statusVisible', !statusVisible);
+            
+            const btn = document.getElementById('status-toggle');
+            const icon = btn.querySelector('i');
+            const text = btn.querySelector('span');
+            
+            if (!statusVisible) {
+                icon.className = 'fas fa-eye';
+                text.textContent = 'Status Visible';
+                showToast('Online status is now visible', 'success');
+            } else {
+                icon.className = 'fas fa-eye-slash';
+                text.textContent = 'Status Hidden';
+                showToast('Online status is now hidden', 'success');
+            }
+        }
+        
+        function showToast(message, type) {
+            // Create toast element if it doesn't exist
+            let toast = document.querySelector('.toast-notification');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'toast-notification';
+                document.body.appendChild(toast);
+            }
+            
+            toast.className = `toast-notification ${type}`;
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            setTimeout(() => toast.classList.add('active'), 10);
+            setTimeout(() => {
+                toast.classList.remove('active');
+                setTimeout(() => toast.style.display = 'none', 300);
+            }, 3000);
+        }
+        
+        function initializeAccessibilityFeatures() {
+            // Add ARIA live regions for screen readers
+            const messagesContainer = document.getElementById('messages');
+            messagesContainer.setAttribute('aria-live', 'polite');
+            messagesContainer.setAttribute('aria-relevant', 'additions');
+            
+            // Add focus management for modals
+            const settingsModal = document.getElementById('settingsModal');
+            settingsModal.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    trapFocus(e, this);
+                }
+            });
+            
+            // Add skip links for keyboard users
+            const skipLink = document.createElement('a');
+            skipLink.href = '#messageInput';
+            skipLink.textContent = 'Skip to message input';
+            skipLink.className = 'skip-link';
+            document.body.insertBefore(skipLink, document.body.firstChild);
+        }
+        
+        function trapFocus(e, container) {
+            const focusableElements = container.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length - 1];
+            
+            if (e.shiftKey) {
+                if (document.activeElement === firstFocusable) {
+                    e.preventDefault();
+                    lastFocusable.focus();
+                }
+            } else {
+                if (document.activeElement === lastFocusable) {
+                    e.preventDefault();
+                    firstFocusable.focus();
+                }
+            }
+        }
+        
+        // Enhanced loading with progress simulation
+        function showEnhancedLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            const progressBar = document.getElementById('progressBar');
+            const loadingMessage = document.getElementById('loadingMessage');
+            
+            const messages = [
+                'Connecting to server...',
+                'Authenticating user...',
+                'Loading chat history...',
+                'Setting up real-time connection...',
+                'Almost ready!'
+            ];
+            
+            overlay.style.display = 'flex';
+            let progress = 0;
+            let messageIndex = 0;
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 20 + 5;
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = progress + '%';
+                
+                if (messageIndex < messages.length - 1 && progress > (messageIndex + 1) * 20) {
+                    messageIndex++;
+                    loadingMessage.textContent = messages[messageIndex];
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                    }, 500);
+                }
+            }, 200);
+        }
+        
+        // Make functions globally available
+        window.updateConnectionStatus = updateConnectionStatus;
+        window.showConnectionToast = showConnectionToast;
+        window.showMessageActions = showMessageActions;
+        window.hideMessageActions = hideMessageActions;
+        window.copyMessage = copyMessage;
+        window.replyToMessage = replyToMessage;
+        window.deleteMessage = deleteMessage;
+        window.toggleSounds = toggleSounds;
+        window.toggleOnlineStatus = toggleOnlineStatus;
+        window.showToast = showToast;
+        window.showEnhancedLoading = showEnhancedLoading;
+    </script>
+    
+    <!-- Additional Enhanced Styles -->
+    <style>
+        /* Welcome Message Styles */
+        .welcome-message {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            opacity: 0.8;
+        }
+        
+        .welcome-content {
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .welcome-content i {
+            font-size: 4rem;
+            margin-bottom: var(--space-xl);
+            background: var(--gradient-cosmic);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .welcome-content h3 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: var(--space-lg);
+            color: var(--text-primary);
+        }
+        
+        .welcome-content p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .welcome-features {
+            display: flex;
+            gap: var(--space-xl);
+            justify-content: center;
+        }
+        
+        .welcome-feature {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        
+        .welcome-feature i {
+            font-size: 1rem;
+            color: var(--primary-500);
+        }
+        
+        /* Enhanced Status Indicators */
+        .status-info {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+        
+        .connection-indicator,
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .status-dot,
+        .connection-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-full);
+            background: var(--success-500);
+            animation: statusPulse 2s infinite;
+        }
+        
+        .disconnected .status-dot,
+        .disconnected .connection-dot {
+            background: var(--warning-500);
+        }
+        
+        /* Enhanced Input Styles */
+        .input-area {
+            position: relative;
+            flex: 1;
+        }
+        
+        .character-count {
+            position: absolute;
+            bottom: -20px;
+            right: 0;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        
+        .input-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-lg);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .input-hints kbd {
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Enhanced Emoji Picker */
+        .emoji-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .emoji-header h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .emoji-header button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: var(--space-sm);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+        
+        .emoji-header button:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        .emoji-categories {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .emoji-category {
+            background: none;
+            border: none;
+            padding: var(--space-md);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+        }
+        
+        .emoji-category:hover,
+        .emoji-category.active {
+            opacity: 1;
+            background: var(--bg-hover);
+            transform: scale(1.1);
+        }
+        
+        .emoji-section {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: var(--space-sm);
+        }
+        
+        /* Enhanced Settings Modal */
+        .settings-section {
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .settings-section h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .setting-info {
+            flex: 1;
+        }
+        
+        .setting-info label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .setting-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .danger-zone {
+            border-top: 2px solid var(--warning-200);
+            padding-top: var(--space-xl);
+        }
+        
+        .danger-zone h4 {
+            color: var(--warning-600);
+        }
+        
+        /* Enhanced Toast Notifications */
+        .connection-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--glass-bg-strong);
+            backdrop-filter: var(--blur-xl);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-lg) var(--space-xl);
+            box-shadow: var(--glass-shadow);
+            z-index: 10001;
+            transition: transform 0.3s var(--ease-spring);
+        }
+        
+        .connection-toast.active {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .connection-toast.success {
+            border-left: 4px solid var(--success-500);
+        }
+        
+        .connection-toast.error {
+            border-left: 4px solid var(--warning-500);
+        }
+        
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--glass-bg-strong);
+            backdrop-filter: var(--blur-xl);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-lg) var(--space-xl);
+            color: var(--text-primary);
+            font-weight: 600;
+            box-shadow: var(--glass-shadow);
+            z-index: 10001;
+            transition: transform 0.3s var(--ease-spring);
+        }
+        
+        .toast-notification.active {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast-notification.success {
+            border-left: 4px solid var(--success-500);
+        }
+        
+        .toast-notification.error {
+            border-left: 4px solid var(--warning-500);
+        }
+        
+        /* Message Actions Menu */
+        .message-actions {
+            position: fixed;
+            background: var(--glass-bg-strong);
+            backdrop-filter: var(--blur-xl);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--glass-shadow);
+            z-index: 10000;
+            padding: var(--space-sm);
+            min-width: 120px;
+        }
+        
+        .message-actions button {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            width: 100%;
+            padding: var(--space-md);
+            background: none;
+            border: none;
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .message-actions button:hover {
+            background: var(--bg-hover);
+        }
+        
+        .message-actions button.danger {
+            color: var(--warning-600);
+        }
+        
+        .message-actions button.danger:hover {
+            background: var(--warning-50);
+            color: var(--warning-700);
+        }
+        
+        /* Enhanced Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: var(--blur-xl);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: var(--text-inverse);
+            max-width: 400px;
+        }
+        
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--primary-500);
+            border-radius: var(--radius-full);
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--space-xl);
+            box-shadow: var(--shadow-neon);
+        }
+        
+        .loading-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+            background: var(--gradient-cosmic);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .loading-content p {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .loading-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-cosmic);
+            border-radius: inherit;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        /* Skip Link for Accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-600);
+            color: var(--text-inverse);
+            padding: 8px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            z-index: 10002;
+            transition: top 0.3s ease;
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+        }
+        
+        /* Enhanced Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            padding: var(--space-lg) var(--space-xl);
+            margin: var(--space-lg) 0;
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur-lg);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            max-width: 200px;
+            box-shadow: var(--glass-shadow);
+            animation: typingSlideIn 0.4s var(--ease-spring);
+        }
+        
+        .typing-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-sunset);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-inverse);
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+        
+        .typing-content {
+            flex: 1;
+        }
+        
+        .typing-content span {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            display: block;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: var(--primary-500);
+            border-radius: var(--radius-full);
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dots span:nth-child(1) { animation-delay: 0s; }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typingBounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-8px);
+                opacity: 1;
+            }
+        }
+        
+        /* Selector Subtitle */
+        .selector-subtitle {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .no-users,
+        .no-users-selector {
+            text-align: center;
+            padding: var(--space-3xl);
+            color: var(--text-muted);
+        }
+        
+        .no-users i,
+        .no-users-selector i {
+            font-size: 3rem;
+            margin-bottom: var(--space-lg);
+            opacity: 0.5;
+        }
+        
+        .no-users p,
+        .no-users-selector p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-md);
+        }
+        
+        .no-users-selector span {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Enhanced Responsive Design for Chat */
+        @media (max-width: 768px) {
+            .chat-header {
+                padding: var(--space-lg);
+            }
+            
+            .header-left {
+                gap: var(--space-lg);
+            }
+            
+            .header-right {
+                gap: var(--space-md);
+            }
+            
+            .back-btn, .users-btn, .settings-btn, .refresh-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 1rem;
+            }
+            
+            .chat-info h1 {
+                font-size: 1.5rem;
+            }
+            
+            .status-info {
+                gap: var(--space-xs);
+            }
+            
+            .emoji-picker {
+                left: var(--space-lg);
+                right: var(--space-lg);
+                bottom: 100px;
+                max-width: none;
+            }
+            
+            .emoji-grid {
+                grid-template-columns: repeat(5, 1fr);
+                max-width: none;
+            }
+            
+            .connection-toast,
+            .toast-notification {
+                left: var(--space-lg);
+                right: var(--space-lg);
+                transform: translateY(-100px);
+            }
+            
+            .connection-toast.active,
+            .toast-notification.active {
+                transform: translateY(0);
+            }
+            
+            .welcome-features {
+                flex-direction: column;
+                gap: var(--space-lg);
+            }
+            
+            .input-footer {
+                flex-direction: column;
+                gap: var(--space-md);
+                align-items: flex-start;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .chat-mode-toggle {
+                margin: var(--space-md);
+            }
+            
+            .mode-btn {
+                padding: var(--space-md) var(--space-lg);
+                font-size: 0.9rem;
+            }
+            
+            .personal-chat-selector {
+                margin: 0 var(--space-md) var(--space-md);
+            }
+            
+            .message-input-container {
+                padding: var(--space-lg);
+            }
+            
+            .input-wrapper {
+                padding: var(--space-md);
+            }
+            
+            .emoji-btn, .send-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 1rem;
+            }
+            
+            .emoji-categories {
+                gap: var(--space-xs);
+                overflow-x: auto;
+                padding-bottom: var(--space-md);
+            }
+            
+            .emoji-category {
+                padding: var(--space-sm);
+                font-size: 1.25rem;
+                flex-shrink: 0;
+            }
+            
+            .modal-content {
+                margin: var(--space-lg);
+                max-width: none;
+                width: auto;
+            }
+            
+            .setting-item {
+                flex-direction: column;
+                gap: var(--space-lg);
+                align-items: flex-start;
+            }
+            
+            .theme-btn, .notification-btn, .sound-btn, .status-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* High Contrast Mode Enhancements */
+        @media (prefers-contrast: high) {
+            .typing-indicator,
+            .welcome-message,
+            .emoji-picker,
+            .connection-toast,
+            .toast-notification {
+                border: 3px solid var(--text-primary);
+            }
+            
+            .status-dot,
+            .connection-dot {
+                border: 2px solid var(--text-primary);
+            }
+        }
+        
+        /* Reduced Motion Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            .loading-spinner,
+            .typing-dots span,
+            .status-dot,
+            .connection-dot {
+                animation: none !important;
+            }
+            
+            .typing-indicator,
+            .connection-toast,
+            .toast-notification,
+            .message-actions {
+                transition: none !important;
+            }
+        }
+        
+        /* Print Styles for Chat */
+        @media print {
+            .chat-header,
+            .message-input-container,
+            .users-sidebar,
+            .modal,
+            .emoji-picker,
+            .connection-toast,
+            .toast-notification,
+            .loading-overlay {
+                display: none !important;
+            }
+            
+            .chat-container {
+                height: auto;
+                box-shadow: none;
+                border: 1px solid #000;
+            }
+            
+            .messages-container {
+                overflow: visible;
+                height: auto;
+            }
+            
+            .message {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Beautiful real-time chat interface">
+    <meta name="keywords" content="chat, messaging, real-time">
+    <meta name="author" content="ChatApp">
+    
+    <title>ChatApp - Chat Interface</title>
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#3b82f6">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💬</text></svg>">
+    
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <!-- Main Chat Container -->
+    <div class="chat-container gpu-accelerated">
+        <!-- Enhanced Chat Header -->
+        <header class="chat-header" role="banner">
+            <div class="header-left">
+                <button 
+                    class="back-btn" 
+                    onclick="goBack()" 
+                    aria-label="Go back to login"
+                    title="Go back"
+                >
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                </button>
+                <div class="chat-info">
+                    <h1 id="chatTitle" class="text-gradient">Group Chat</h1>
+                    <div class="status-info">
+                        <span id="onlineCount" class="status-text">0 online</span>
+                        <div class="status-indicator" id="connectionStatus" aria-label="Connection status">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Connected</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button 
+                    class="refresh-btn" 
+                    onclick="refreshChatHistory()" 
+                    aria-label="Refresh chat history"
+                    title="Refresh chat"
+                >
+                    <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                </button>
+                <button 
+                    class="users-btn" 
+                    onclick="toggleUsersList()"
+                    aria-label="Show online users"
+                    title="Users list"
+                >
+                    <i class="fas fa-users" aria-hidden="true"></i>
+                </button>
+                <button 
+                    class="settings-btn" 
+                    onclick="toggleSettings()"
+                    aria-label="Open settings"
+                    title="Settings"
+                >
+                    <i class="fas fa-cog" aria-hidden="true"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Users Sidebar -->
+        <aside class="users-sidebar" id="usersSidebar" aria-label="Online users">
+            <div class="sidebar-header">
+                <h2>Online Users</h2>
+                <button 
+                    class="close-sidebar" 
+                    onclick="toggleUsersList()"
+                    aria-label="Close users list"
+                >
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="users-list" id="usersList" role="list">
+                <!-- Users will be populated here dynamically -->
+                <div class="no-users" style="display: none;">
+                    <i class="fas fa-user-friends" aria-hidden="true"></i>
+                    <p>No other users online</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Enhanced Chat Mode Toggle -->
+        <nav class="chat-mode-toggle" role="tablist" aria-label="Chat mode selection">
+            <button 
+                class="mode-btn active" 
+                id="groupMode" 
+                onclick="switchToGroupChat()"
+                role="tab"
+                aria-selected="true"
+                aria-controls="chat-content"
+            >
+                <i class="fas fa-users" aria-hidden="true"></i>
+                <span>Group Chat</span>
+            </button>
+            <button 
+                class="mode-btn" 
+                id="personalMode" 
+                onclick="switchToPersonalChat()"
+                role="tab"
+                aria-selected="false"
+                aria-controls="chat-content"
+            >
+                <i class="fas fa-user" aria-hidden="true"></i>
+                <span>Personal Chat</span>
+            </button>
+        </nav>
+
+        <!-- Enhanced Personal Chat User Selector -->
+        <div class="personal-chat-selector" id="personalChatSelector" style="display: none;" role="region" aria-label="Select user for personal chat">
+            <div class="selector-header">
+                <h3>Select User to Chat</h3>
+                <p class="selector-subtitle">Choose someone to start a private conversation</p>
+            </div>
+            <div class="user-selector-list" id="userSelectorList" role="list">
+                <!-- Available users will be populated here -->
+                <div class="no-users-selector" style="display: none;">
+                    <i class="fas fa-user-slash" aria-hidden="true"></i>
+                    <p>No users available for chat</p>
+                    <span>Users will appear here when they come online</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Messages Container -->
+        <main class="messages-container" id="messagesContainer" role="main" aria-label="Chat messages">
+            <div class="messages" id="messages" role="log" aria-live="polite" aria-label="Message history">
+                <!-- Messages will be populated here -->
+                <div class="welcome-message" id="welcomeMessage">
+                    <div class="welcome-content">
+                        <i class="fas fa-comments glow" aria-hidden="true"></i>
+                        <h3>Welcome to ChatApp!</h3>
+                        <p>Start a conversation by typing a message below.</p>
+                        <div class="welcome-features">
+                            <div class="welcome-feature">
+                                <i class="fas fa-bolt" aria-hidden="true"></i>
+                                <span>Real-time messaging</span>
+                            </div>
+                            <div class="welcome-feature">
+                                <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                                <span>Secure & private</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Scroll to Bottom Button -->
+            <button 
+                class="scroll-to-bottom-btn" 
+                id="scrollToBottomBtn" 
+                onclick="scrollToBottom()"
+                aria-label="Scroll to bottom"
+                style="display: none;"
+            >
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            
+            <!-- Enhanced Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator" style="display: none;" aria-live="polite">
+                <div class="typing-avatar">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                </div>
+                <div class="typing-content">
+                    <span id="typingText">Someone is typing...</span>
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Ultra Enhanced Message Input -->
+        <footer class="message-input-container" role="contentinfo">
+            <div class="input-wrapper">
+                <div class="input-area">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="Type your message..." 
+                        rows="1"
+                        maxlength="1000"
+                        onkeydown="handleKeyDown(event)"
+                        oninput="autoResize(this); handleTyping()"
+                        aria-label="Type your message"
+                    ></textarea>
+                    <div class="character-count" id="characterCount">0/1000</div>
+                </div>
+                <div class="input-buttons">
+                    <button 
+                        class="emoji-btn" 
+                        onclick="toggleEmojiPicker()"
+                        aria-label="Add emoji"
+                        title="Add emoji"
+                    >
+                        <i class="fas fa-smile" aria-hidden="true"></i>
+                    </button>
+                    <input 
+                        type="file" 
+                        id="fileInput" 
+                        accept="image/*" 
+                        style="display: none;"
+                        onchange="handleFileUpload(event)"
+                    >
+                    <button 
+                        class="attachment-btn" 
+                        onclick="document.getElementById('fileInput').click()"
+                        aria-label="Attach file"
+                        title="Attach file"
+                    >
+                        <i class="fas fa-paperclip" aria-hidden="true"></i>
+                    </button>
+                    <button 
+                        class="send-btn" 
+                        id="sendBtn" 
+                        onclick="sendMessage()"
+                        aria-label="Send message"
+                        title="Send message"
+                        disabled
+                    >
+                        <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Message Input Footer -->
+            <div class="input-footer">
+                <div class="input-hints">
+                    <span class="hint">
+                        <kbd>Enter</kbd> to send, <kbd>Shift + Enter</kbd> for new line
+                    </span>
+                </div>
+                <div class="connection-indicator" id="connectionIndicator">
+                    <span class="connection-dot"></span>
+                    <span>Connected</span>
+                </div>
+            </div>
+            
+            <!-- Message Search -->
+            <div class="message-search" style="display: none;">
+                <input 
+                    type="text" 
+                    id="messageSearch" 
+                    placeholder="Search messages..."
+                    aria-label="Search messages"
+                >
+                <button onclick="clearMessageSearch()" aria-label="Clear search">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+        </footer>
+
+        <!-- Ultra Enhanced Emoji Picker -->
+        <div class="emoji-picker" id="emojiPicker" style="display: none;" role="dialog" aria-label="Emoji picker">
+            <div class="emoji-header">
+                <h4>Choose an emoji</h4>
+                <button onclick="toggleEmojiPicker()" aria-label="Close emoji picker">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="emoji-categories">
+                <button class="emoji-category active" data-category="smileys" aria-label="Smileys">😊</button>
+                <button class="emoji-category" data-category="people" aria-label="People">👥</button>
+                <button class="emoji-category" data-category="nature" aria-label="Nature">🌿</button>
+                <button class="emoji-category" data-category="objects" aria-label="Objects">🎯</button>
+                <button class="emoji-category" data-category="symbols" aria-label="Symbols">⭐</button>
+            </div>
+            <div class="emoji-grid" id="emojiGrid">
+                <!-- Smileys & Emotion -->
+                <div class="emoji-section" data-category="smileys">
+                    <span onclick="insertEmoji('😊')" title="Smiling face">😊</span>
+                    <span onclick="insertEmoji('😂')" title="Face with tears of joy">😂</span>
+                    <span onclick="insertEmoji('🤣')" title="Rolling on floor laughing">🤣</span>
+                    <span onclick="insertEmoji('😍')" title="Smiling face with heart-eyes">😍</span>
+                    <span onclick="insertEmoji('🥰')" title="Smiling face with hearts">🥰</span>
+                    <span onclick="insertEmoji('😘')" title="Face blowing kiss">😘</span>
+                    <span onclick="insertEmoji('😎')" title="Smiling face with sunglasses">😎</span>
+                    <span onclick="insertEmoji('🤔')" title="Thinking face">🤔</span>
+                    <span onclick="insertEmoji('😢')" title="Crying face">😢</span>
+                    <span onclick="insertEmoji('😭')" title="Loudly crying face">😭</span>
+                    <span onclick="insertEmoji('😡')" title="Pouting face">😡</span>
+                    <span onclick="insertEmoji('🤯')" title="Exploding head">🤯</span>
+                </div>
+                
+                <!-- People & Body -->
+                <div class="emoji-section" data-category="people" style="display: none;">
+                    <span onclick="insertEmoji('👋')" title="Waving hand">👋</span>
+                    <span onclick="insertEmoji('👍')" title="Thumbs up">👍</span>
+                    <span onclick="insertEmoji('👎')" title="Thumbs down">👎</span>
+                    <span onclick="insertEmoji('✌️')" title="Victory hand">✌️</span>
+                    <span onclick="insertEmoji('🤝')" title="Handshake">🤝</span>
+                    <span onclick="insertEmoji('👏')" title="Clapping hands">👏</span>
+                    <span onclick="insertEmoji('🙏')" title="Folded hands">🙏</span>
+                    <span onclick="insertEmoji('💪')" title="Flexed biceps">💪</span>
+                    <span onclick="insertEmoji('🤙')" title="Call me hand">🤙</span>
+                    <span onclick="insertEmoji('🤘')" title="Sign of horns">🤘</span>
+                    <span onclick="insertEmoji('👌')" title="OK hand">👌</span>
+                    <span onclick="insertEmoji('🤞')" title="Crossed fingers">🤞</span>
+                </div>
+                
+                <!-- Nature -->
+                <div class="emoji-section" data-category="nature" style="display: none;">
+                    <span onclick="insertEmoji('🌟')" title="Glowing star">🌟</span>
+                    <span onclick="insertEmoji('⭐')" title="Star">⭐</span>
+                    <span onclick="insertEmoji('🌙')" title="Crescent moon">🌙</span>
+                    <span onclick="insertEmoji('☀️')" title="Sun">☀️</span>
+                    <span onclick="insertEmoji('🌈')" title="Rainbow">🌈</span>
+                    <span onclick="insertEmoji('🌸')" title="Cherry blossom">🌸</span>
+                    <span onclick="insertEmoji('🌺')" title="Hibiscus">🌺</span>
+                    <span onclick="insertEmoji('🍀')" title="Four leaf clover">🍀</span>
+                    <span onclick="insertEmoji('🌿')" title="Herb">🌿</span>
+                    <span onclick="insertEmoji('🦄')" title="Unicorn">🦄</span>
+                    <span onclick="insertEmoji('🐝')" title="Honeybee">🐝</span>
+                    <span onclick="insertEmoji('🦋')" title="Butterfly">🦋</span>
+                </div>
+                
+                <!-- Objects -->
+                <div class="emoji-section" data-category="objects" style="display: none;">
+                    <span onclick="insertEmoji('🎉')" title="Party popper">🎉</span>
+                    <span onclick="insertEmoji('🎊')" title="Confetti ball">🎊</span>
+                    <span onclick="insertEmoji('🎈')" title="Balloon">🎈</span>
+                    <span onclick="insertEmoji('🎁')" title="Wrapped gift">🎁</span>
+                    <span onclick="insertEmoji('🏆')" title="Trophy">🏆</span>
+                    <span onclick="insertEmoji('🎯')" title="Direct hit">🎯</span>
+                    <span onclick="insertEmoji('🎨')" title="Artist palette">🎨</span>
+                    <span onclick="insertEmoji('🎭')" title="Performing arts">🎭</span>
+                    <span onclick="insertEmoji('🎵')" title="Musical note">🎵</span>
+                    <span onclick="insertEmoji('🎶')" title="Musical notes">🎶</span>
+                    <span onclick="insertEmoji('📱')" title="Mobile phone">📱</span>
+                    <span onclick="insertEmoji('💻')" title="Laptop">💻</span>
+                </div>
+                
+                <!-- Symbols -->
+                <div class="emoji-section" data-category="symbols" style="display: none;">
+                    <span onclick="insertEmoji('❤️')" title="Red heart">❤️</span>
+                    <span onclick="insertEmoji('💕')" title="Two hearts">💕</span>
+                    <span onclick="insertEmoji('💖')" title="Sparkling heart">💖</span>
+                    <span onclick="insertEmoji('💯')" title="Hundred points">💯</span>
+                    <span onclick="insertEmoji('🔥')" title="Fire">🔥</span>
+                    <span onclick="insertEmoji('✨')" title="

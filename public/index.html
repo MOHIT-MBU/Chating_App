@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Beautiful real-time chat application with modern design">
+    <meta name="keywords" content="chat, messaging, real-time, beautiful UI">
+    <meta name="author" content="ChatApp">
+    
+    <title>ChatApp - Beautiful Real-time Chat</title>
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#3b82f6">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💬</text></svg>">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Authentication Container -->
+        <div class="auth-container gpu-accelerated">
+            <!-- Auth Header -->
+            <div class="auth-header">
+                <div class="logo">
+                    <i class="fas fa-comments bounce"></i>
+                    <h1 class="float">ChatApp</h1>
+                </div>
+                <p>Connect with friends in real-time with beautiful messaging experience</p>
+            </div>
+
+            <!-- Auth Tabs -->
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="switchTab('signin')" aria-label="Switch to Sign In">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Sign In</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('signup')" aria-label="Switch to Sign Up">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Sign Up</span>
+                </button>
+            </div>
+
+            <!-- Sign In Form -->
+            <form class="auth-form active" id="signinForm" novalidate>
+                <div class="form-group">
+                    <i class="fas fa-envelope" aria-hidden="true"></i>
+                    <input 
+                        type="email" 
+                        id="signinEmail" 
+                        placeholder="Enter your email" 
+                        required 
+                        autocomplete="email"
+                        aria-label="Email address"
+                    >
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-lock" aria-hidden="true"></i>
+                    <input 
+                        type="password" 
+                        id="signinPassword" 
+                        placeholder="Enter your password" 
+                        required 
+                        autocomplete="current-password"
+                        aria-label="Password"
+                        minlength="6"
+                    >
+                </div>
+                <button type="submit" class="auth-btn" aria-label="Sign in to your account">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Sign In</span>
+                </button>
+                
+                <!-- Social Authentication -->
+                <div class="social-auth">
+                    <button 
+                        type="button" 
+                        class="google-btn" 
+                        onclick="signInWithGoogle()"
+                        aria-label="Continue with Google"
+                    >
+                        <i class="fab fa-google"></i>
+                        <span>Continue with Google</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form class="auth-form" id="signupForm" novalidate>
+                <div class="form-group">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    <input 
+                        type="text" 
+                        id="signupName" 
+                        placeholder="Enter your full name" 
+                        required 
+                        autocomplete="name"
+                        aria-label="Full name"
+                        minlength="2"
+                        maxlength="50"
+                    >
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-envelope" aria-hidden="true"></i>
+                    <input 
+                        type="email" 
+                        id="signupEmail" 
+                        placeholder="Enter your email" 
+                        required 
+                        autocomplete="email"
+                        aria-label="Email address"
+                    >
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-lock" aria-hidden="true"></i>
+                    <input 
+                        type="password" 
+                        id="signupPassword" 
+                        placeholder="Create a strong password" 
+                        required 
+                        autocomplete="new-password"
+                        aria-label="Password"
+                        minlength="6"
+                    >
+                </div>
+                <button type="submit" class="auth-btn" aria-label="Create your account">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Create Account</span>
+                </button>
+                
+                <!-- Social Authentication -->
+                <div class="social-auth">
+                    <button 
+                        type="button" 
+                        class="google-btn" 
+                        onclick="signInWithGoogle()"
+                        aria-label="Continue with Google"
+                    >
+                        <i class="fab fa-google"></i>
+                        <span>Continue with Google</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Auth Footer -->
+            <div class="auth-footer">
+                <p>By continuing, you agree to our <a href="#" class="text-gradient">Terms of Service</a> and <a href="#" class="text-gradient">Privacy Policy</a></p>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features">
+            <div class="feature gpu-accelerated">
+                <i class="fas fa-bolt glow" aria-hidden="true"></i>
+                <h3>Lightning Fast</h3>
+                <p>Real-time messaging with instant delivery, live typing indicators, and seamless online status updates</p>
+            </div>
+            
+            <div class="feature gpu-accelerated">
+                <i class="fas fa-users heartbeat" aria-hidden="true"></i>
+                <h3>Group & Personal</h3>
+                <p>Switch effortlessly between vibrant group discussions and intimate private conversations</p>
+            </div>
+            
+            <div class="feature gpu-accelerated">
+                <i class="fas fa-shield-alt float" aria-hidden="true"></i>
+                <h3>Secure & Private</h3>
+                <p>Advanced encryption and secure authentication powered by Firebase for complete peace of mind</p>
+            </div>
+            
+            <div class="feature gpu-accelerated">
+                <i class="fas fa-mobile-alt bounce" aria-hidden="true"></i>
+                <h3>Mobile First</h3>
+                <p>Stunning responsive design that delivers a perfect experience on every device and screen size</p>
+            </div>
+            
+            <div class="feature gpu-accelerated">
+                <i class="fas fa-palette shimmer" aria-hidden="true"></i>
+                <h3>Beautiful Design</h3>
+                <p>Modern glassmorphism UI with smooth animations, vibrant gradients, and delightful interactions</p>
+            </div>
+            
+            <div class="feature gpu-accelerated">
+                <i class="fas fa-cloud glow" aria-hidden="true"></i>
+                <h3>Cloud Powered</h3>
+                <p>Messages stored securely in the cloud with real-time synchronization across all your devices</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="error-toast" id="errorToast" style="display: none;">
+        <div class="toast-content">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorMessage">Something went wrong. Please try again.</span>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="success-toast" id="successToast" style="display: none;">
+        <div class="toast-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="successMessage">Success!</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Firebase SDK -->
+    <script type="module" src="firebase-config.js"></script>
+    <!-- Auth functionality -->
+    <script src="auth.js"></script>
+    
+    <!-- Theme Detection -->
+    <script>
+        // Check for saved theme preference or default to light
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        
+        // Listen for theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            }
+        });
+        
+        // Enhanced form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add real-time validation
+            const inputs = document.querySelectorAll('input[required]');
+            inputs.forEach(input => {
+                input.addEventListener('blur', validateField);
+                input.addEventListener('input', clearFieldError);
+            });
+            
+            // Add floating label effect
+            inputs.forEach(input => {
+                if (input.value) {
+                    input.parentElement.classList.add('has-value');
+                }
+                
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                    if (this.value) {
+                        this.parentElement.classList.add('has-value');
+                    } else {
+                        this.parentElement.classList.remove('has-value');
+                    }
+                });
+            });
+            
+            // Add smooth transitions for better UX
+            setTimeout(() => {
+                document.body.classList.add('animations-ready');
+            }, 100);
+            
+            // Add intersection observer for feature animations
+            const features = document.querySelectorAll('.feature');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('animate-in');
+                        }, index * 100);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+            
+            features.forEach(feature => observer.observe(feature));
+        });
+        
+        function validateField(event) {
+            const field = event.target;
+            const value = field.value.trim();
+            const type = field.type;
+            const fieldGroup = field.parentElement;
+            
+            // Clear previous errors
+            fieldGroup.classList.remove('error');
+            
+            // Validate based on field type
+            let isValid = true;
+            let errorMessage = '';
+            
+            if (type === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) {
+                    isValid = false;
+                    errorMessage = 'Please enter a valid email address';
+                }
+            } else if (type === 'password') {
+                if (value.length < 6) {
+                    isValid = false;
+                    errorMessage = 'Password must be at least 6 characters';
+                }
+            } else if (field.id === 'signupName') {
+                if (value.length < 2) {
+                    isValid = false;
+                    errorMessage = 'Name must be at least 2 characters';
+                }
+            }
+            
+            if (!isValid) {
+                fieldGroup.classList.add('error');
+                showFieldError(field, errorMessage);
+            }
+            
+            return isValid;
+        }
+        
+        function clearFieldError(event) {
+            const fieldGroup = event.target.parentElement;
+            fieldGroup.classList.remove('error');
+            const errorElement = fieldGroup.querySelector('.field-error');
+            if (errorElement) {
+                errorElement.remove();
+            }
+        }
+        
+        function showFieldError(field, message) {
+            const fieldGroup = field.parentElement;
+            let errorElement = fieldGroup.querySelector('.field-error');
+            
+            if (!errorElement) {
+                errorElement = document.createElement('div');
+                errorElement.className = 'field-error';
+                fieldGroup.appendChild(errorElement);
+            }
+            
+            errorElement.textContent = message;
+        }
+        
+        // Enhanced loading states
+        function showLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.style.display = 'flex';
+            setTimeout(() => overlay.classList.add('active'), 10);
+        }
+        
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.remove('active');
+            setTimeout(() => overlay.style.display = 'none', 300);
+        }
+        
+        // Toast notifications
+        function showToast(type, message) {
+            const toast = document.getElementById(type + 'Toast');
+            const messageElement = document.getElementById(type + 'Message');
+            
+            messageElement.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => toast.classList.add('active'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('active');
+                setTimeout(() => toast.style.display = 'none', 300);
+            }, 4000);
+        }
+        
+        // Keyboard navigation support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                document.body.classList.add('keyboard-navigation');
+            }
+        });
+        
+        document.addEventListener('mousedown', function() {
+            document.body.classList.remove('keyboard-navigation');
+        });
+        
+        // Performance optimization
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // Smooth scroll polyfill for older browsers
+        if (!CSS.supports('scroll-behavior', 'smooth')) {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/smoothscroll-polyfill/0.4.4/smoothscroll.min.js';
+            document.head.appendChild(script);
+            script.onload = () => window.__forceSmoothScrollPolyfill__ = true;
+        }
+        
+        // Error boundary for better error handling
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            showToast('error', 'An unexpected error occurred. Please refresh the page.');
+        });
+        
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Unhandled promise rejection:', e.reason);
+            showToast('error', 'Something went wrong. Please try again.');
+        });
+        
+        // Make functions globally available
+        window.showLoading = showLoading;
+        window.hideLoading = hideLoading;
+        window.showToast = showToast;
+        window.validateField = validateField;
+        window.clearFieldError = clearFieldError;
+        window.debounce = debounce;
+    </script>
+    
+    <!-- Additional CSS for enhanced features -->
+    <style>
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+        }
+        
+        /* Toast Notifications */
+        .error-toast,
+        .success-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--background);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: var(--transition);
+            max-width: 400px;
+        }
+        
+        .error-toast.active,
+        .success-toast.active {
+            transform: translateX(0);
+        }
+        
+        .error-toast {
+            border-left: 4px solid var(--warning);
+        }
+        
+        .success-toast {
+            border-left: 4px solid var(--success);
+        }
+        
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            color: var(--text-primary);
+            font-weight: var(--font-weight-semibold);
+        }
+        
+        .error-toast .toast-content i {
+            color: var(--warning);
+        }
+        
+        .success-toast .toast-content i {
+            color: var(--success);
+        }
+        
+        /* Field Error Styles */
+        .form-group.error input {
+            border-color: var(--warning) !important;
+            box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.2) !important;
+        }
+        
+        .form-group.error i {
+            color: var(--warning) !important;
+        }
+        
+        .field-error {
+            color: var(--warning);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            margin-top: var(--spacing-sm);
+            padding-left: calc(var(--spacing-xl) * 3);
+            animation: slideInError 0.3s ease-out;
+        }
+        
+        @keyframes slideInError {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Enhanced Form States */
+        .form-group.focused input {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.2);
+        }
+        
+        .form-group.has-value i {
+            color: var(--primary);
+        }
+        
+        /* Animation States */
+        .animations-ready .feature {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .feature.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Keyboard Navigation */
+        .keyboard-navigation *:focus {
+            outline: 3px solid var(--primary) !important;
+            outline-offset: 2px !important;
+        }
+        
+        /* Link Styles */
+        a {
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Enhanced Mobile Styles */
+        @media (max-width: 480px) {
+            .error-toast,
+            .success-toast {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                transform: translateY(-100px);
+            }
+            
+            .error-toast.active,
+            .success-toast.active {
+                transform: translateY(0);
+            }
+        }
+        
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            .loading-overlay,
+            .error-toast,
+            .success-toast,
+            .field-error {
+                transition: none !important;
+            }
+            
+            .feature {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
+        
+        /* Print Styles */
+        @media print {
+            .loading-overlay,
+            .error-toast,
+            .success-toast {
+                display: none !important;
+            }
+        }
+    </style>
+</body>
+</html>
